@@ -41,7 +41,7 @@ function App() {
     setCompareResults(null);
     try {
       const requests = tones.map((t) =>
-        axios.post('http://localhost:5000/api/rewrite', { message, tone: t })
+        axios.post(`${import.meta.env.VITE_API_URL}/api/rewrite`, { message, tone: t })
       );
       const responses = await Promise.all(requests);
       const results = tones.map((t, i) => ({
