@@ -60,9 +60,9 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex justify-center p-4 gap-4 pt-20">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-8 w-full max-w-xl h-fit">
-        <h1 className="text-3xl font-bold text-white mb-1">ToneShift</h1>
+    <div className="min-h-screen bg-slate-950 flex flex-col lg:flex-row justify-center items-start p-4 gap-4 pt-10 lg:pt-20">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 lg:p-8 w-full max-w-xl h-fit mx-auto lg:mx-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">ToneShift</h1>
         <p className="text-slate-400 text-sm mb-6">Rewrite your message in any tone, instantly.</p>
 
         <textarea
@@ -89,7 +89,7 @@ function App() {
           ))}
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={handleRewrite}
             disabled={loading || compareLoading}
@@ -109,28 +109,28 @@ function App() {
         {result && (
           <div className="mt-6 p-4 bg-slate-800 border border-slate-700 rounded-lg">
             <p className="text-xs text-slate-400 mb-2 uppercase tracking-wide">Result</p>
-            <p className="text-slate-100 leading-relaxed">{result}</p>
+            <p className="text-slate-100 leading-relaxed break-words">{result}</p>
           </div>
         )}
 
         {compareResults && (
-          <div className="mt-6 grid gap-3">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
             {compareResults.map((r) => (
               <div key={r.tone} className="p-4 bg-slate-800 border border-slate-700 rounded-lg">
                 <p className="text-xs text-blue-400 mb-2 uppercase tracking-wide font-semibold">{r.tone}</p>
-                <p className="text-slate-100 leading-relaxed text-sm">{r.text}</p>
+                <p className="text-slate-100 leading-relaxed text-sm break-words">{r.text}</p>
               </div>
             ))}
           </div>
         )}
       </div>
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-xs h-fit">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl p-6 w-full max-w-xl lg:max-w-xs h-fit mx-auto lg:mx-0">
         <p className="text-xs text-slate-400 mb-4 uppercase tracking-wide font-semibold">Session History</p>
         {sessionHistory.length === 0 ? (
           <p className="text-slate-500 text-sm">No rewrites yet this session.</p>
         ) : (
-          <div className="space-y-3 max-h-[600px] overflow-y-auto">
+          <div className="space-y-3 max-h-[400px] lg:max-h-[600px] overflow-y-auto">
             {sessionHistory.map((h, i) => (
               <div key={i} className="p-3 bg-slate-800 border border-slate-700 rounded-lg">
                 <p className="text-xs text-blue-400 mb-1">{h.tone}</p>
