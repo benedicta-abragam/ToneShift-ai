@@ -2,12 +2,11 @@
 
 An AI-powered message tone rewriter that instantly transforms your text into Formal, Friendly, Assertive, Apologetic, or Persuasive tones — built with the MERN stack and integrated with Groq's LLM API.
 
-![ToneShift Screenshot](client/src/assets/hero.png)
 
 ## 🔗 Live Demo
 
-- Frontend: [your-vercel-link-here]
-- Backend API: [your-render-link-here]
+- Frontend: [https://tone-shift-ai-zeta.vercel.app/]
+- Backend API: [https://toneshift-ai-server.onrender.com/]
 
 ## ✨ Features
 
