@@ -18,10 +18,10 @@ function App() {
     setResult('');
     setCompareResults(null);
     try {
-      const res = await axios.post('http://localhost:5000/api/rewrite', {
-        message,
-        tone,
-      });
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/rewrite`, {
+  message,
+  tone,
+});
       setResult(res.data.rewrittenMessage);
       setSessionHistory((prev) => [
         { original: message, tone, rewritten: res.data.rewrittenMessage },
