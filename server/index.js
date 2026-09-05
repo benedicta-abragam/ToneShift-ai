@@ -4,6 +4,14 @@ require('dotenv').config();
 const connectDB = require('./config/db');
 const rewriteRoute = require('./routes/rewrite');
 
+if (!process.env.GROQ_API_KEY) {
+  console.error('FATAL: GROQ_API_KEY is not set. The rewrite feature cannot function without it.');
+  process.exit(1);
+}
+if (!process.env.MONGO_URI) {
+  console.warn('WARNING: MONGO_URI is not set. Rewrite history will not be saved.');
+}
+
 connectDB();
 
 const app = express();

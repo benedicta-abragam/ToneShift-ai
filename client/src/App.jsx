@@ -1,6 +1,31 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  timeout: 60000, // generous enough to survive a Render free-tier cold start, but bounded
+});
+
+function getErrorMessage(err) {
+  console.log('[App] axios error - full details:', {
+    message: err.message,
+    code: err.code,
+    responseStatus: err.response?.status,
+    responseData: err.response?.data,
+    requestMade: !!err.request,
+  });
+  if (err.code === 'ECONNABORTED') {
+    return 'The server took too long to respond (it may be waking up after inactivity). Please try again.';
+  }
+  if (err.response) {
+    return err.response.data?.error || err.response.data?.message || `Server error (${err.response.status}). Please try again.`;
+  }
+  if (err.request) {
+    return 'Could not reach the server. Check your connection and try again.';
+  }
+  return `Something went wrong: ${err.message}`;
+}
+
 function App() {
   const [message, setMessage] = useState('');
   const [tone, setTone] = useState('Formal');
@@ -8,6 +33,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [compareResults, setCompareResults] = useState(null);
   const [compareLoading, setCompareLoading] = useState(false);
+  const [compareError, setCompareError] = useState('');
   const [sessionHistory, setSessionHistory] = useState([]);
 
   const tones = ['Formal', 'Friendly', 'Assertive', 'Apologetic', 'Persuasive'];
@@ -17,21 +43,22 @@ function App() {
     setLoading(true);
     setResult('');
     setCompareResults(null);
+    console.log('[App] handleRewrite - request URL:', `${api.defaults.baseURL}/api/rewrite`);
+    console.log('[App] handleRewrite - request body:', { message, tone });
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/rewrite`, {
-  message,
-  tone,
-});
+      const res = await api.post('/api/rewrite', { message, tone });
+      console.log('[App] handleRewrite - response data:', res.data);
       setResult(res.data.rewrittenMessage);
       setSessionHistory((prev) => [
         { original: message, tone, rewritten: res.data.rewrittenMessage },
         ...prev,
       ]);
     } catch (err) {
-      setResult('Something went wrong. Please try again.');
+      setResult(getErrorMessage(err));
       console.error(err);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleCompareAll = async () => {
@@ -39,10 +66,9 @@ function App() {
     setCompareLoading(true);
     setResult('');
     setCompareResults(null);
+    setCompareError('');
     try {
-      const requests = tones.map((t) =>
-        axios.post(`${import.meta.env.VITE_API_URL}/api/rewrite`, { message, tone: t })
-      );
+      const requests = tones.map((t) => api.post('/api/rewrite', { message, tone: t }));
       const responses = await Promise.all(requests);
       const results = tones.map((t, i) => ({
         tone: t,
@@ -54,9 +80,11 @@ function App() {
         ...prev,
       ]);
     } catch (err) {
+      setCompareError(getErrorMessage(err));
       console.error(err);
+    } finally {
+      setCompareLoading(false);
     }
-    setCompareLoading(false);
   };
 
   return (
@@ -110,6 +138,12 @@ function App() {
           <div className="mt-6 p-4 bg-slate-800 border border-slate-700 rounded-lg">
             <p className="text-xs text-slate-400 mb-2 uppercase tracking-wide">Result</p>
             <p className="text-slate-100 leading-relaxed break-words">{result}</p>
+          </div>
+        )}
+
+        {compareError && (
+          <div className="mt-6 p-4 bg-red-950 border border-red-800 rounded-lg">
+            <p className="text-red-200 text-sm">{compareError}</p>
           </div>
         )}
 
